@@ -1,9 +1,9 @@
-<div>
-    <h2>${{country.name.official}}</h2>
-    <p><strong>Capital:</strong> ${{country.capital}}</p>
-    <p><strong>Population:</strong> ${{country.population}}</p>
-    <img src="${{country.flags.svg}}" alt="${{country.name.official}} flag" width="200" height="120" />
-    <p><strong>Languages:</strong> ${{country.languages
+<div class="country_card">
+    <h2>${{this.country.name.official}}</h2>
+    <p><strong>Capital:</strong> ${{this.country.capital}}</p>
+    <p><strong>Population:</strong> ${{this.country.population}}</p>
+    <img src="${{this.country.flags.svg}}" alt="${{this.country.name.official}} flag" width="200" height="120" />
+    <p><strong>Languages:</strong> ${{this.country.languages
     .map((language) => language.name)
     .join(", ")}}</p>
 </div>
