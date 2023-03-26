@@ -5,7 +5,8 @@ import debounce from "lodash.debounce";
 const DEBOUNCE_DELAY = 300;
 
 const searchBox = document.querySelector("#search-box");
-const countriesList = document.querySelector("#country-list");
+const countriesList = document.querySelector(".country-list");
+const countryContainer = document.querySelector(".country-info");
 
 const renderCountries = (countries) => {
   const html = countries
