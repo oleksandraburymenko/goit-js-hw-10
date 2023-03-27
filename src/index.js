@@ -1,69 +1,76 @@
 import './css/styles.css';
-import {fetchCountries} from "./fetchCountries.js";
-import debounce from "lodash.debounce";
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { fetchCountries } from './fetchCountries';
+import debounce from 'lodash.debounce';
+import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 
-const inputEl = document.querySelector("#search-box");
-const countryListRef = document.querySelector(".country-list");
-const cardContainerRef = document.querySelector(".country-info");
+const inputEl = document.querySelector('#search-box');
+const countryListElem = document.querySelector('.country-list');
+const countryInfoElem = document.querySelector('.country-info');
 
-function handleSearchCountry (event) {
-  event.preventDefault();
-  const name = event.target.value.trim();
-  
-  if (name === '') {
-    countryListRef.innerHTML = '';
-    return;
-  }
-  debounce(() => {
-    fetchCountries(name)
-    .then(data => {
-        if (data.length > 10) {
-        Notify.info('Too many matches found. Please enter a more specific name.');
-        } else if (data.length >= 2 && data.length <= 10) {
-        renderCountryList(data);
-        } else if (data.length === 1) {
-          renderCountryCard(data[0]);
-        }
+inputEl.addEventListener('input', debounce(handlerCountrySearch, DEBOUNCE_DELAY, { trailing: true }));
+
+  function handlerCountrySearch(event) {
+
+    event.preventDefault();
+    const searchedCountry = event.target.value.trim();
+    countryListElem.innerHTML = '';
+    countryInfoElem.innerHTML = '';
+    
+    if (!searchedCountry) {
+      countryListElem.innerHTML = '';
+      countryInfoElem.innerHTML = '';
+      return
+    }
+
+    fetchCountries(searchedCountry)
+      .then(result => {
+      if (result.length > 10) {
+        Notiflix.Notify.warning('Too many matches found. Please enter a more specific name');
+        return;
+      }
+      foundCountries(result);
     })
-    .catch(error => {
-      Notify.info('Oops, there is no country with that name');
-    });
-  }, DEBOUNCE_DELAY)();
+      .catch(error => {
+        countryListElem.innerHTML = '';
+        countryInfoElem.innerHTML = '';
+        Notiflix.Notify.failure('Oops, there is no country with that name');
+      })
+  };
 
-}
+function foundCountries(result) {
+  let inputData = result.length;
 
-inputEl.addEventListener('input', handleSearchCountry);
-
-function renderCountryList(countryList) {
-  const markup = countryList
-    .map(country => {
-      return `
-        <li class="country-list__item">
-          <img src="${this.flags.svg}" alt="${this.name}" class="country-list__flag">
-          <span class="country-list__name">${this.name}</span>
-        </li>
-      `;
+  
+  if (inputData >= 2 && inputData <= 10) {
+    const mark = result
+    .map(res => {
+      return `<li>
+      <img src="${res.flags.svg}" alt="Flag of ${res.name.official}" width="30" hight="20">
+        <p><b>${res.name.official}</b></p>
+      </li>`;
     })
     .join('');
+    countryListElem.innerHTML = mark;
 
-  countryListRef.innerHTML = markup;
-}
 
-function renderCountryCard(country) {
-  const markup = `
-    <div class="card">
-      <img src="${this.flags.svg}" alt="${this.name}" class="card__flag">
-      <div class="card__details">
-        <h2 class="card__name">${this.name.official}</h2>
-        <p class="card__population">Population: ${this.population.toLocaleString()}</p>
-        <p class="card__capital">Capital: ${this.capital}</p>
-        <p class="card__languages">Languages: ${this.languages.map(lang => lang.name).join(', ')}</p>
-      </div>
-    </div>
-  `;
+        } else if (inputData === 1) {
 
-  cardContainerRef.innerHTML = markup;
-}
+    const mark = result
+    .map(res => {
+      return `<li>
+      <img src="${res.flags.svg}" alt="Flag of ${res.name.official}" width="30" hight="20">
+        <p><b>${res.name.official}</b></p>
+        <p><b>Capital</b>: ${res.capital}</p>
+        <p><b>Population</b>: ${res.population}</p>
+        <p><b>Languages</b>: ${Object.values(res.languages)} </p>
+      </li>`;
+    })
+    .join('');
+    countryListElem.innerHTML = mark;
+        }
+
+};
+
+ 
