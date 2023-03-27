@@ -42,8 +42,8 @@ function renderCountryList(countryList) {
     .map(country => {
       return `
         <li class="country-list__item">
-          <img src="${country.flags.svg}" alt="${country.name}" class="country-list__flag">
-          <span class="country-list__name">${country.name.official}</span>
+          <img src="${this.flags.svg}" alt="${this.name}" class="country-list__flag">
+          <span class="country-list__name">${this.name}</span>
         </li>
       `;
     })
@@ -55,12 +55,12 @@ function renderCountryList(countryList) {
 function renderCountryCard(country) {
   const markup = `
     <div class="card">
-      <img src="${country.flags.svg}" alt="${country.name}" class="card__flag">
+      <img src="${this.flags.svg}" alt="${this.name}" class="card__flag">
       <div class="card__details">
-        <h2 class="card__name">${country.name.official}</h2>
-        <p class="card__population">Population: ${country.population.toLocaleString()}</p>
-        <p class="card__capital">Capital: ${country.capital}</p>
-        <p class="card__languages">Languages: ${country.languages.map(lang => lang.name).join(', ')}</p>
+        <h2 class="card__name">${this.name.official}</h2>
+        <p class="card__population">Population: ${this.population.toLocaleString()}</p>
+        <p class="card__capital">Capital: ${this.capital}</p>
+        <p class="card__languages">Languages: ${this.languages.map(lang => lang.name).join(', ')}</p>
       </div>
     </div>
   `;
