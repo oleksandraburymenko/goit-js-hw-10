@@ -11,10 +11,14 @@ const cardContainerRef = document.querySelector(".country-info");
 
 function handleSearchCountry (event) {
   event.preventDefault();
-  const validInput = event.target.value.trim();
-  fetchCountries(validInput).then(console.log);
-
-  fetchCountries(validInput)
+  const name = event.target.value.trim();
+  
+  if (name === '') {
+    countryListRef.innerHTML = '';
+    return;
+  }
+  debounce(() => {
+    fetchCountries(name)
     .then(data => {
         if (data.length > 10) {
         Notify.info('Too many matches found. Please enter a more specific name.');
@@ -26,19 +30,20 @@ function handleSearchCountry (event) {
     })
     .catch(error => {
       Notify.info('Oops, there is no country with that name');
-    })    
-    
+    });
+  }, DEBOUNCE_DELAY)();
+
 }
 
-inputEl.addEventListener('input', debounce(handleSearchCountry, DEBOUNCE_DELAY));
+inputEl.addEventListener('input', handleSearchCountry);
 
 function renderCountryList(countryList) {
   const markup = countryList
     .map(country => {
       return `
         <li class="country-list__item">
-          <img src="${country.flag}" alt="${country.name}" class="country-list__flag">
-          <span class="country-list__name">${country.name}</span>
+          <img src="${country.flags.svg}" alt="${country.name}" class="country-list__flag">
+          <span class="country-list__name">${country.name.official}</span>
         </li>
       `;
     })
@@ -50,11 +55,10 @@ function renderCountryList(countryList) {
 function renderCountryCard(country) {
   const markup = `
     <div class="card">
-      <img src="${country.flag}" alt="${country.name}" class="card__flag">
+      <img src="${country.flags.svg}" alt="${country.name}" class="card__flag">
       <div class="card__details">
-        <h2 class="card__name">${country.name}</h2>
+        <h2 class="card__name">${country.name.official}</h2>
         <p class="card__population">Population: ${country.population.toLocaleString()}</p>
-        <p class="card__region">Region: ${country.region}</p>
         <p class="card__capital">Capital: ${country.capital}</p>
         <p class="card__languages">Languages: ${country.languages.map(lang => lang.name).join(', ')}</p>
       </div>

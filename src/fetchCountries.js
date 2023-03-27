@@ -9,7 +9,6 @@ export const fetchCountries = async (name) => {
 
   })
   
-  
   const countries = await response;
   return countries;
 };
